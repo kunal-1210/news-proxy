@@ -6,22 +6,39 @@ require('dotenv').config();
 const app = express();
 app.use(cors());
 
-// Route: fetch news
-app.get('/top-headlines', async (req, res) => {
+// Route: fetch top headlines
+app.get('/v2/top-headlines', async (req, res) => {
   try {
     const { country, category, q } = req.query;
     const response = await axios.get('https://newsapi.org/v2/top-headlines', {
       params: {
-        country: country || 'us',
-        category: category || 'general',
-        q: q || '',
+        country: country || '',       // empty string = all countries
+        category: category || '',     // empty string = all categories
+        q: q || '',                   // optional search query
         apiKey: process.env.NEWS_API_KEY
       }
     });
-
     res.json(response.data);
   } catch (error) {
-    console.error(error.message);
+    console.error('Top headlines error:', error.message);
+    res.status(500).json({ error: 'Failed to fetch top headlines' });
+  }
+});
+
+// Route: fetch everything (all news)
+app.get('/v2/everything', async (req, res) => {
+  try {
+    const { q } = req.query;
+    const query = q || 'latest';  // fallback if no query is provided
+    const response = await axios.get('https://newsapi.org/v2/everything', {
+      params: {
+        q: query,
+        apiKey: process.env.NEWS_API_KEY
+      }
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Everything endpoint error:', error.message);
     res.status(500).json({ error: 'Failed to fetch news' });
   }
 });

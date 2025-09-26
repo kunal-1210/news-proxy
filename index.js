@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 
 // Route: fetch top headlines
-app.get('/top-headlines', async (req, res) => {
+app.get('/v2/top-headlines', async (req, res) => {
   try {
     const { country, category, q } = req.query;
     const response = await axios.get('https://newsapi.org/v2/top-headlines', {
@@ -26,7 +26,7 @@ app.get('/top-headlines', async (req, res) => {
 });
 
 // Route: fetch everything (all news)
-app.get('/everything', async (req, res) => {
+app.get('/v2/everything', async (req, res) => {
   try {
     const { q } = req.query;
     const query = q || 'latest';  // fallback if no query is provided
